@@ -1,0 +1,9 @@
+.numberPad {
+  border: 1px solid #000;
+  padding: 10px;
+}
+.numberPad__item {
+  border: 1px solid #000;
+  padding: 10px;
+  cursor: pointer;
+}
