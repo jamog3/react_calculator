@@ -1,8 +1,14 @@
 .app {
+  position: relative;
   height: 100vh;
 }
 
 .appInr {
   width: 300px;
-  margin: 0 auto;
+  margin: auto;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 50%;
+  transform: translateY(50%);
 }

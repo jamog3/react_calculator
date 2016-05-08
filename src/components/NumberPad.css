@@ -1,9 +1,68 @@
 .numberPad {
-  border: 1px solid #000;
-  padding: 10px;
+  position: relative;
+  height: 308px;
 }
 .numberPad__item {
-  border: 1px solid #000;
-  padding: 10px;
+  border: 1px solid #777;
   cursor: pointer;
+  width: 69px;
+  height: 69px;
+  line-height: 69px;
+  text-align: center;
+  font-size: 18px;
+  box-sizing: border-box;
+  position: absolute;
+}
+.numberPad__item:active {
+  background: #f0f0f0;
+}
+.numberPad__item:nth-child(7) ,
+.numberPad__item:nth-child(4) ,
+.numberPad__item:nth-child(1) ,
+.numberPad__item:nth-child(10) {
+  left: 0;
+}
+.numberPad__item:nth-child(8) ,
+.numberPad__item:nth-child(5) ,
+.numberPad__item:nth-child(2) ,
+.numberPad__item_clear {
+  left: 77px;
+}
+.numberPad__item:nth-child(9) ,
+.numberPad__item:nth-child(6) ,
+.numberPad__item:nth-child(3) ,
+.numberPad__item_equal {
+  left: 154px;
+}
+.numberPad__item_addition ,
+.numberPad__item_subtraction ,
+.numberPad__item_multiplication ,
+.numberPad__item_division {
+  left: 231px;
+}
+
+.numberPad__item:nth-child(7) ,
+.numberPad__item:nth-child(8) ,
+.numberPad__item:nth-child(9) ,
+.numberPad__item_division {
+  top: 0;
+}
+.numberPad__item:nth-child(4) ,
+.numberPad__item:nth-child(5) ,
+.numberPad__item:nth-child(6) ,
+.numberPad__item_multiplication {
+  top: 77px;
+}
+.numberPad__item:nth-child(1) ,
+.numberPad__item:nth-child(2) ,
+.numberPad__item:nth-child(3) ,
+.numberPad__item_subtraction {
+  top: 154px;
+}
+
+.numberPad__item:nth-child(10) ,
+.numberPad__item_clear ,
+.numberPad__item_equal ,
+.numberPad__item_addition {
+  top: 231px;
 }

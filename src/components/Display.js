@@ -5,29 +5,29 @@ export default class Display extends React.Component {
 
   static get propTypes() {
     return {
-      displayNum: React.PropTypes.number.isRequired
+      displayNum: React.PropTypes.number.isRequired,
+      calcType: React.PropTypes.string
     };
   }
-
-  // static get defaultProps() {
-  //   return  {
-  //     initialCount: 0
-  //   };
-  // }
 
   constructor(props) {
     super(props);
   }
 
   componentWillReceiveProps() {
-    const {displayNum} = this.props;
+    const {displayNum, calcType} = this.props;
   }
 
   render() {
     return (
-      <div className={styles.display}>{this.props.displayNum}</div>
+      <div className={styles.display}>
+        <div className={styles.display__calcType}>
+          {this.props.calcType}
+        </div>
+        <div className={styles.display__inr}>
+          {this.props.displayNum}
+        </div>
+      </div>
     )
   }
 }
-
-// Display.propTypes = { displayNum: React.PropTypes.number };

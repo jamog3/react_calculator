@@ -1,7 +1,7 @@
 import React from 'react'
 import styles from './NumberPad.css';
 
-const numBtn = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+const numBtn = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
 
 export default class NumberPad extends React.Component {
 
@@ -12,7 +12,9 @@ export default class NumberPad extends React.Component {
       keyType: ''
     };
     this.numInput = this.numInput.bind(this);
-    this.otherButton = this.otherButton.bind(this);
+    this.calcButton = this.calcButton.bind(this);
+    this.equalButton = this.equalButton.bind(this);
+    this.clearButton = this.clearButton.bind(this);
   }
 
   render() {
@@ -22,12 +24,12 @@ export default class NumberPad extends React.Component {
           {numBtn.map( (num, i) => {
             return <li className={styles.numberPad__item} onClick={this.numInput} data-num={num} key={i}>{num}</li>;
           })}
-          <li className={styles.numberPad__item} onClick={this.otherButton} data-key='+'>＋</li>
-          <li className={styles.numberPad__item} onClick={this.otherButton} data-key='-'>−</li>
-          <li className={styles.numberPad__item} onClick={this.otherButton} data-key='*'>×</li>
-          <li className={styles.numberPad__item} onClick={this.otherButton} data-key='/'>÷</li>
-          <li className={styles.numberPad__item} onClick={this.otherButton} data-key='='>＝</li>
-          <li className={styles.numberPad__item} onClick={this.otherButton} data-key='ac'>AC</li>
+          <li className={`${styles.numberPad__item} ${styles.numberPad__item_addition}`} onClick={this.calcButton} data-key='+'>&#xff0b;</li>
+          <li className={`${styles.numberPad__item} ${styles.numberPad__item_subtraction}`} onClick={this.calcButton} data-key='-'>&minus;</li>
+          <li className={`${styles.numberPad__item} ${styles.numberPad__item_multiplication}`} onClick={this.calcButton} data-key='*'>&times;</li>
+          <li className={`${styles.numberPad__item} ${styles.numberPad__item_division}`} onClick={this.calcButton} data-key='/'>&divide;</li>
+          <li className={`${styles.numberPad__item} ${styles.numberPad__item_equal}`} onClick={this.equalButton} data-key='='>&#xff1d;</li>
+          <li className={`${styles.numberPad__item} ${styles.numberPad__item_clear}`} onClick={this.clearButton} data-key='ac'>AC</li>
         </ul>
       </div>
     )
@@ -39,10 +41,22 @@ export default class NumberPad extends React.Component {
     this.props.numKeyPress({num: num});
   }
 
-  otherButton(e) {
+  calcButton(e) {
     e.preventDefault();
     const keyType = e.target.getAttribute('data-key');
-    this.props.otherKeyPress({keyType: keyType});
+    this.props.calcKeyPress({keyType: keyType});
+  }
+
+  equalButton(e) {
+    e.preventDefault();
+    const keyType = e.target.getAttribute('data-key');
+    this.props.equalKeyPress({keyType: keyType});
+  }
+
+  clearButton(e) {
+    e.preventDefault();
+    const keyType = e.target.getAttribute('data-key');
+    this.props.clearKeyPress({keyType: keyType});
   }
 
 }

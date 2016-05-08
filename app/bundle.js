@@ -46,6 +46,10 @@
 
 	'use strict';
 
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	var _react = __webpack_require__(1);
@@ -76,13 +80,30 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+	// 直前に押されたキーが数字か否か
+	var isNumKeyPress = void 0;
+	// 記憶しておく数字
+	var memoryNum = 0;
+	// 2つ前に押された記号キーの種類
+	var calculationType = void 0;
+
 	var App = function (_React$Component) {
 	  _inherits(App, _React$Component);
 
-	  function App() {
+	  function App(props) {
 	    _classCallCheck(this, App);
 
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(App).apply(this, arguments));
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(App).call(this, props));
+
+	    _this.state = {
+	      displayNum: _this.props.displayNum,
+	      calcType: _this.props.calcType
+	    };
+	    _this.numPress = _this.numPress.bind(_this);
+	    _this.calcPress = _this.calcPress.bind(_this);
+	    _this.equalPress = _this.equalPress.bind(_this);
+	    _this.clearPress = _this.clearPress.bind(_this);
+	    return _this;
 	  }
 
 	  _createClass(App, [{
@@ -90,19 +111,135 @@
 	    value: function render() {
 	      return _react2.default.createElement(
 	        'div',
-	        { 'class': _main2.default.app },
+	        { className: _main2.default.app },
 	        _react2.default.createElement(
 	          'div',
-	          { 'class': _main2.default.appInr },
-	          _react2.default.createElement(_Display2.default, null),
-	          _react2.default.createElement(_NumberPad2.default, null)
+	          { className: _main2.default.appInr },
+	          _react2.default.createElement(_Display2.default, {
+	            displayNum: this.state.displayNum,
+	            calcType: this.state.calcType
+	          }),
+	          _react2.default.createElement(_NumberPad2.default, {
+	            numKeyPress: this.numPress.bind(this),
+	            calcKeyPress: this.calcPress.bind(this),
+	            equalKeyPress: this.equalPress.bind(this),
+	            clearKeyPress: this.clearPress.bind(this)
+	          })
 	        )
 	      );
+	    }
+	  }, {
+	    key: 'numPress',
+	    value: function numPress(num) {
+	      // 今の表示されてる数字
+	      var displayNum = this.state.displayNum;
+
+	      var nowNum = displayNum;
+	      // 直前に記号キーが押されてる場合、表示をクリア
+	      if (!isNumKeyPress) {
+	        nowNum = 0;
+	      }
+	      // 追加された数字
+	      var addNum = num.num;
+	      // 数字を付け足す
+	      nowNum = nowNum === 0 ? '' : nowNum;
+	      var newNum = nowNum + addNum;
+	      this.setState({ displayNum: Number(newNum) });
+	      // 数字を押したフラグ
+	      isNumKeyPress = true;
+	    }
+	  }, {
+	    key: 'calcPress',
+	    value: function calcPress(keyType) {
+	      var _state = this.state;
+	      var displayNum = _state.displayNum;
+	      var calcType = _state.calcType;
+
+	      var otherKeyType = keyType.keyType;
+	      calculationType = otherKeyType;
+	      if (!isNumKeyPress) {
+	        return;
+	      }
+	      switch (otherKeyType) {
+	        case '+':
+	          memoryNum = memoryNum + displayNum;
+	          this.setState({ displayNum: memoryNum });
+	          this.setState({ calcType: '＋' });
+	          break;
+	        case '-':
+	          memoryNum = memoryNum - displayNum;
+	          this.setState({ displayNum: memoryNum });
+	          this.setState({ calcType: '−' });
+	          break;
+	        case '*':
+	          // 初期値が0の時は計算しない
+	          memoryNum = memoryNum === 0 ? displayNum : memoryNum * displayNum;
+	          this.setState({ displayNum: memoryNum });
+	          this.setState({ calcType: '×' });
+	          break;
+	        case '/':
+	          // 初期値が0の時は計算しない
+	          memoryNum = memoryNum === 0 ? displayNum : memoryNum / displayNum;
+	          this.setState({ displayNum: memoryNum });
+	          this.setState({ calcType: '÷' });
+	          break;
+	      }
+	      // 数字を押したフラグ
+	      isNumKeyPress = false;
+	    }
+	  }, {
+	    key: 'equalPress',
+	    value: function equalPress(keyType) {
+	      var _state2 = this.state;
+	      var displayNum = _state2.displayNum;
+	      var calcType = _state2.calcType;
+
+	      console.log('イコール', calculationType);
+	      switch (calculationType) {
+	        case '+':
+	          memoryNum = memoryNum + displayNum;
+	          break;
+	        case '-':
+	          memoryNum = memoryNum - displayNum;
+	          break;
+	        case '*':
+	          memoryNum = memoryNum * displayNum;
+	          break;
+	        case '/':
+	          memoryNum = memoryNum / displayNum;
+	          break;
+	      }
+	      this.setState({ displayNum: memoryNum });
+	      this.setState({ calcType: '' });
+	      // 数字を押したフラグ
+	      isNumKeyPress = false;
+	    }
+	  }, {
+	    key: 'clearPress',
+	    value: function clearPress(keyType) {
+	      var _state3 = this.state;
+	      var displayNum = _state3.displayNum;
+	      var calcType = _state3.calcType;
+
+	      console.log('クリア');
+	      memoryNum = 0;
+	      this.setState({ displayNum: memoryNum });
+	      this.setState({ calcType: '' });
+	      // 数字を押したフラグ
+	      isNumKeyPress = false;
 	    }
 	  }]);
 
 	  return App;
 	}(_react2.default.Component);
+
+	exports.default = App;
+
+
+	App.defaultProps = {
+	  displayNum: 0,
+	  calcType: ''
+	};
 
 	_reactDom2.default.render(_react2.default.createElement(App, null), document.getElementById('app'));
 
@@ -20229,7 +20366,7 @@
 
 
 	// module
-	exports.push([module.id, ".main__app___QHEFg {\n  height: 100vh;\n}\n.main__appInr___V759C {\n  width: 300px;\n  margin: 0 auto;\n}", ""]);
+	exports.push([module.id, ".main__app___QHEFg {\n  position: relative;\n  height: 100vh;\n}\n\n.main__appInr___V759C {\n  width: 300px;\n  margin: auto;\n  position: absolute;\n  left: 0;\n  right: 0;\n  bottom: 50%;\n  transform: translateY(50%);\n}", ""]);
 
 	// exports
 	exports.locals = {
@@ -20561,10 +20698,6 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactDom = __webpack_require__(33);
-
-	var _reactDom2 = _interopRequireDefault(_reactDom);
-
 	var _Display = __webpack_require__(173);
 
 	var _Display2 = _interopRequireDefault(_Display);
@@ -20580,21 +20713,61 @@
 	var Display = function (_React$Component) {
 	  _inherits(Display, _React$Component);
 
-	  function Display() {
+	  _createClass(Display, null, [{
+	    key: 'propTypes',
+	    get: function get() {
+	      return {
+	        displayNum: _react2.default.PropTypes.number.isRequired,
+	        calcType: _react2.default.PropTypes.string
+	      };
+	    }
+
+	    // static get defaultProps() {
+	    //   return  {
+	    //     initialCount: 0
+	    //   };
+	    // }
+
+	  }]);
+
+	  function Display(props) {
 	    _classCallCheck(this, Display);
 
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(Display).apply(this, arguments));
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(Display).call(this, props));
 	  }
 
 	  _createClass(Display, [{
+	    key: 'componentWillReceiveProps',
+	    value: function componentWillReceiveProps() {
+	      var _props = this.props;
+	      var displayNum = _props.displayNum;
+	      var calcType = _props.calcType;
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
-	      return _react2.default.createElement('div', { className: _Display2.default.display });
+	      return _react2.default.createElement(
+	        'div',
+	        { className: _Display2.default.display },
+	        _react2.default.createElement(
+	          'div',
+	          { className: _Display2.default.display__calcType },
+	          this.props.calcType
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: _Display2.default.display__inr },
+	          this.props.displayNum
+	        )
+	      );
 	    }
 	  }]);
 
 	  return Display;
 	}(_react2.default.Component);
+
+	// Display.propTypes = { displayNum: React.PropTypes.number };
+
 
 	exports.default = Display;
 
@@ -20633,11 +20806,13 @@
 
 
 	// module
-	exports.push([module.id, ".Display__display___2Fw7a {\n  border: 1px solid #000;\n  padding: 10px;\n  font-family: Digital;\n  height: 1em;\n}", ""]);
+	exports.push([module.id, ".Display__display___2Fw7a {\n  border: 1px solid #777;\n  margin-bottom: 10px;\n  padding: 14px 10px 10px;\n  /* height: 1em; */\n  box-sizing: border-box;\n  overflow: hidden;\n  line-height: 1;\n  position: relative;\n}\n.Display__display__inr___3Eide {\n  float: right;\n  position: relative;\n  font-family: Digital;\n  text-align: right;\n  font-size: 42px;\n  overflow: hidden;\n  width: 6em;\n}\n.Display__display__inr___3Eide::before {\n  content: '888888888888';\n  position: absolute;\n  left: 0;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  text-align: right;\n  opacity: .05;\n}\n.Display__display__calcType___23-Lv {\n  position: absolute;\n  left: 10px;\n  top: 12px;\n}\n\n", ""]);
 
 	// exports
 	exports.locals = {
-		"display": "Display__display___2Fw7a"
+		"display": "Display__display___2Fw7a",
+		"display__inr": "Display__display__inr___3Eide",
+		"display__calcType": "Display__display__calcType___23-Lv"
 	};
 
 /***/ },
@@ -20656,10 +20831,6 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactDom = __webpack_require__(33);
-
-	var _reactDom2 = _interopRequireDefault(_reactDom);
-
 	var _NumberPad = __webpack_require__(176);
 
 	var _NumberPad2 = _interopRequireDefault(_NumberPad);
@@ -20677,10 +20848,20 @@
 	var NumberPad = function (_React$Component) {
 	  _inherits(NumberPad, _React$Component);
 
-	  function NumberPad() {
+	  function NumberPad(props) {
 	    _classCallCheck(this, NumberPad);
 
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(NumberPad).apply(this, arguments));
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(NumberPad).call(this, props));
+
+	    _this.state = {
+	      num: '',
+	      keyType: ''
+	    };
+	    _this.numInput = _this.numInput.bind(_this);
+	    _this.calcButton = _this.calcButton.bind(_this);
+	    _this.equalButton = _this.equalButton.bind(_this);
+	    _this.clearButton = _this.clearButton.bind(_this);
+	    return _this;
 	  }
 
 	  _createClass(NumberPad, [{
@@ -20703,16 +20884,64 @@
 	          }),
 	          _react2.default.createElement(
 	            'li',
-	            { className: _NumberPad2.default.numberPad__item, onClick: this.numInput, 'data-num': 'addition' },
-	            '+'
+	            { className: _NumberPad2.default.numberPad__item, onClick: this.calcButton, 'data-key': '+' },
+	            '＋'
 	          ),
 	          _react2.default.createElement(
 	            'li',
-	            { className: _NumberPad2.default.numberPad__item, onClick: this.equal },
-	            '='
+	            { className: _NumberPad2.default.numberPad__item, onClick: this.calcButton, 'data-key': '-' },
+	            '−'
+	          ),
+	          _react2.default.createElement(
+	            'li',
+	            { className: _NumberPad2.default.numberPad__item, onClick: this.calcButton, 'data-key': '*' },
+	            '×'
+	          ),
+	          _react2.default.createElement(
+	            'li',
+	            { className: _NumberPad2.default.numberPad__item, onClick: this.calcButton, 'data-key': '/' },
+	            '÷'
+	          ),
+	          _react2.default.createElement(
+	            'li',
+	            { className: _NumberPad2.default.numberPad__item, onClick: this.equalButton, 'data-key': '=' },
+	            '＝'
+	          ),
+	          _react2.default.createElement(
+	            'li',
+	            { className: _NumberPad2.default.numberPad__item, onClick: this.clearButton, 'data-key': 'ac' },
+	            'AC'
 	          )
 	        )
 	      );
+	    }
+	  }, {
+	    key: 'numInput',
+	    value: function numInput(e) {
+	      e.preventDefault();
+	      var num = e.target.getAttribute('data-num');
+	      this.props.numKeyPress({ num: num });
+	    }
+	  }, {
+	    key: 'calcButton',
+	    value: function calcButton(e) {
+	      e.preventDefault();
+	      var keyType = e.target.getAttribute('data-key');
+	      this.props.calcKeyPress({ keyType: keyType });
+	    }
+	  }, {
+	    key: 'equalButton',
+	    value: function equalButton(e) {
+	      e.preventDefault();
+	      var keyType = e.target.getAttribute('data-key');
+	      this.props.equalKeyPress({ keyType: keyType });
+	    }
+	  }, {
+	    key: 'clearButton',
+	    value: function clearButton(e) {
+	      e.preventDefault();
+	      var keyType = e.target.getAttribute('data-key');
+	      this.props.clearKeyPress({ keyType: keyType });
 	    }
 	  }]);
 
@@ -20756,12 +20985,15 @@
 
 
 	// module
-	exports.push([module.id, ".NumberPad__numberPad___nV4Lk {\n  border: 1px solid #000;\n  padding: 10px;\n}\n.NumberPad__numberPad__item___3fecd {\n  border: 1px solid #000;\n  padding: 10px;\n}", ""]);
+	exports.push([module.id, ".NumberPad__numberPad___nV4Lk {\n  position: relative;\n  height: 385px;\n}\n.NumberPad__numberPad__item___3fecd {\n  border: 1px solid #777;\n  cursor: pointer;\n  width: 69px;\n  height: 69px;\n  line-height: 69px;\n  text-align: center;\n  font-size: 24px;\n  box-sizing: border-box;\n  position: absolute;\n}\n.NumberPad__numberPad__item___3fecd:nth-child(7) ,\n.NumberPad__numberPad__item___3fecd:nth-child(4) ,\n.NumberPad__numberPad__item___3fecd:nth-child(1) ,\n.NumberPad__numberPad__item___3fecd:nth-child(0) {\n  left: 0;\n}\n.NumberPad__numberPad__item_num8___3sHKR ,\n.NumberPad__numberPad__item_num5___27WWN ,\n.NumberPad__numberPad__item_num2___3W-HS {\n  left: 77px;\n}\n\n", ""]);
 
 	// exports
 	exports.locals = {
 		"numberPad": "NumberPad__numberPad___nV4Lk",
-		"numberPad__item": "NumberPad__numberPad__item___3fecd"
+		"numberPad__item": "NumberPad__numberPad__item___3fecd",
+		"numberPad__item_num8": "NumberPad__numberPad__item_num8___3sHKR",
+		"numberPad__item_num5": "NumberPad__numberPad__item_num5___27WWN",
+		"numberPad__item_num2": "NumberPad__numberPad__item_num2___3W-HS"
 	};
 
 /***/ }
