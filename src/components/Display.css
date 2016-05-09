@@ -17,7 +17,7 @@
   overflow: hidden;
   width: 6em;
 }
-.display__inr::before {
+/* .display__inr::before {
   content: '888888888888';
   position: absolute;
   left: 0;
@@ -26,7 +26,7 @@
   bottom: 0;
   text-align: right;
   opacity: .05;
-}
+} */
 .display__calcType {
   position: absolute;
   left: 10px;
